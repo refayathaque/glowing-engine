@@ -1,0 +1,12 @@
+.pagewrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+main {
+  flex-grow: 1;
+}
+* {
+  margin: 0em !important;
+  /* need !important to overwrite bootstrap margins */
+}
