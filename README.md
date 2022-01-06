@@ -32,22 +32,40 @@ Tue Jan 4 2022
 
 Wed Jan 5 2022
 
-- Decided to work on a rather big feature, and one that will make it easier to build out this app moving forward. This feature will seek to build out an end-to-end system that allows the React app (API client) to make a requests to API Gateway and have that request go through to the backend Cloud Run microservice. The Cloud Run microservice will return the list of buckets and the objects inside of each. The only authentication required will be the project API key in the path query string.
+- Decided to work on a rather big feature, and one that will make it easier to build out this app moving forward. This feature will seek to build out an end-to-end system that allows the React app (API client) to make a requests to API Gateway and have that request go through to the backend Cloud Run microservice. The Cloud Run microservice will return the list of buckets and the objects inside of each (with metadata for both) and provide the client with abilities to delete buckets, delete objects, create buckets, upload objects and rename objects. The only authentication required will be the project API key in the path query string.
   - Main tasks for this feature will be:
     - Build out and **locally test a node.js container** running express, using the local service account you should be able to make API calls to storage using the methods in `nodejs-scripts/storage`
       - Code out `server.js` to serve data returned from storage methods
         - Simply run `node server.js` to run the express app, and add the path to `localhost:8080` that corresponds to each of your [express routes](https://expressjs.com/en/starter/hello-world.html)
         - "modularize your implementation details and put them into dedicated files and folders whereas the src/index.js file should only care about putting everything together and starting the application." - https://www.robinwieruch.de/node-express-server-rest-api/
         - Use [nodemon](https://www.npmjs.com/package/nodemon) to not have to restart express app every time you make a change
-      - Write bash script to make it simple to run Docker containers locally for testing purposes
       - Code will need to be different prior to deployment because we won't be using this God-mode admin service account when deployed to Cloud Run
         - Will need to figure out a strategy for this later...
       - Express route to fetch a list of buckets ✅
       - Express route to fetch objects in a bucket ✅
+      - Express route to create bucket
+      - Express route to upload object
+      - Express route to delete bucket
+      - Express route to delete object
+      - Express route to rename object
+      - Dockerize and make CD ready
+        - Add Dockerfile (check paths!), Dockerfile.local for local Docker testing and .dockerignore ✅
+        - Write bash script to make it simple to run the Docker container locally for testing purposes ✅
+          - https://docs.docker.com/engine/reference/commandline/build/#specify-a-dockerfile--f
+          - Test that the dockerized version of this express app works ✅
+        - Add `cloudbuild.yaml` ✅
+        - Add notes about local testing with Docker in a README within `gcp-infra-and-microservices/nodejs-containers/basic-express` ✅
     - Build out the **OpenAPI spec yaml** file that will correspond to ^, there will be only one backend as we'll have a single microservice returning both bucket and object data. Follow API building best-practices and examples to design the response data.
+      - Security configuration for API key
       - Paths:
         - GET all buckets
         - GET all objects - will need bucket name as parameter
-        - GET all buckets AND all objects inside those buckets
-    - Code out **React app** to fetch and display buckets, objects and buckets and objects together
     - Build out required **infra** like buckets, API Gateway resources, associated IAM resources, Cloud Build, Cloud Run service, etc.
+      - Custom IAM policy to allow Cloud Run service to **only list/get buckets and objects**
+      - Create tf resource files ✅
+    - Code out **React app** to fetch and display buckets, objects and buckets and objects together
+
+Thu Jan 6 2022
+
+- Got the dockerization and dockerized testing done and updated code and docs in `basic-express` as well. When starting up on preparing the tf files for infra provisioning I realized that it's stupid to not code out all the app functionalities in this iteration of the prototype/feature, so went back and revised the intentions of this feature and added all CRUD operations to list of functionalities. Will now have to change the name of service and other files from `get-buckets-and-objects` to `storage-crud`.
+  - Change name everywhere from from `get-buckets-and-objects` to `storage-crud`.
