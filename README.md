@@ -32,7 +32,7 @@ Tue Jan 4 2022
 
 Wed Jan 5 2022
 
-- Decided to work on a rather big feature, and one that will make it easier to build out this app moving forward. This feature will seek to build out an end-to-end system that allows the React app (API client) to make a requests to API Gateway and have that request go through to the backend Cloud Run microservice. The Cloud Run microservice will return the list of buckets and the objects inside of each (with metadata for both) and provide the client with abilities to delete buckets, delete objects, create buckets, upload objects and rename objects. The only authentication required will be the project API key in the path query string.
+- Decided to work on a rather big feature, and one that will make it easier to build out this app moving forward. This feature will seek to build out an end-to-end system that allows the React app (API client) to make a requests to API Gateway and have that request go through to the backend Cloud Run microservice. The Cloud Run microservice will return the list of buckets and the objects inside of each (with metadata for both) and provide the client with abilities to delete buckets, delete objects, create buckets, ~~upload objects~~ and rename objects. The only authentication required will be the project API key in the path query string.
   - Main tasks for this feature will be:
     - Build out and **locally test a node.js container** running express, using the local service account you should be able to make API calls to storage using the methods in `nodejs-scripts/storage`
       - Code out `server.js` to serve data returned from storage methods
@@ -43,8 +43,8 @@ Wed Jan 5 2022
         - Will need to figure out a strategy for this later...
       - Express route to fetch a list of buckets ✅
       - Express route to fetch objects in a bucket ✅
-      - Express route to create bucket
-      - Express route to upload object
+      - Express route to create bucket ✅
+      - ~~Express route to upload object~~
       - Express route to delete bucket
       - Express route to delete object
       - Express route to rename object
@@ -67,5 +67,8 @@ Wed Jan 5 2022
 
 Thu Jan 6 2022
 
-- Got the dockerization and dockerized testing done and updated code and docs in `basic-express` as well. When starting up on preparing the tf files for infra provisioning I realized that it's stupid to not code out all the app functionalities in this iteration of the prototype/feature, so went back and revised the intentions of this feature and added all CRUD operations to list of functionalities. Will now have to change the name of service and other files from `get-buckets-and-objects` to `storage-crud`.
-  - Change name everywhere from from `get-buckets-and-objects` to `storage-crud`.
+- Got the dockerization and dockerized testing done and updated code and docs in `basic-express` as well. When preparing the tf files for infra provisioning I realized that it's stupid to not code out all the app functionalities in this prototype/feature build, so went back and revised the goals and added _all_ CRUD operations to list of functionalities. Will now have to change the name of service and other files from `get-buckets-and-objects` to `storage-crud`.
+  - Change name everywhere from from `get-buckets-and-objects` to `storage-crud`. ✅
+  - Document how to run [nodemon](https://www.npmjs.com/package/nodemon) for making life easier when building express apps ✅
+    - `nodemon ./server.js localhost 8080`
+  - Added a few new routes in `server.js`, and decided that the upload file functionality would be too hard for what I need to get up and running right now, will return to this later.
