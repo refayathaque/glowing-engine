@@ -47,10 +47,15 @@ Wed Jan 5 2022
       - Express route to create bucket ✅
         - `curl -X POST localhost:8080/buckets/<name>`
       - ~~Express route to upload object~~
-      - Express route to delete bucket
+      - Express route to delete bucket ✅
         - `curl -X "DELETE" localhost:8080/buckets/<name>`
       - Express route to delete object
+        - `curl -X "DELETE" localhost:8080/objects/<bucket>/<name>` ✅
       - Express route to rename object
+        - `curl -X "PUT" localhost:8080/objects/<bucket>/<name>/<newname>` ✅
+
+- `curl -X "PUT" localhost:8080/objects/glakfjhlksfmg53245235/pooper.jpg/pooper.jpg`
+
       - Dockerize and make CD ready
         - Add Dockerfile (check paths!), Dockerfile.local for local Docker testing and .dockerignore ✅
         - Write bash script to make it simple to run the Docker container locally for testing purposes ✅
@@ -87,3 +92,13 @@ Fri Jan 7 2022
 - **Understand best-practices for API development** and change the response objects/arrays appropriately, and whatever else I think I need to.
   - "If we don’t follow commonly accepted conventions, then we confuse the maintainers of the API and the clients that use them since it’s different from what everyone expects."
   - https://stackoverflow.blog/2020/03/02/best-practices-for-rest-api-design/
+
+Sat Jan 8 2022
+
+- Goal tonight is to code out and test delete object and rename object functionalities, then start refactoring the express code to do things like error handling and other API best-practice-y things.
+- Look into req.body and how to unpack that from it's JSON form using middleware (more information in Jan 7 notes).
+  - "If you want to implement guards or any other logic in your route that relies on that id (of an existing user), you pass the userID in the params. Let's say you are submitting a form where a new user registers.. You don't want to send the credentials in the parameters since it's confidential data and easily accessible this way. Here it makes sense to put those values in the request-body and use therefore req.body.."
+    - https://stackoverflow.com/a/54903133/8379751
+- Read up on GCP storage, AWS S3, Azure Blob Storage use cases to get a feel for how you might be able to repackage this app for a client.
+- Some operations (e.g., updateObject) are returning tons of extraneous data we don't need, at some point I'll need to groom the response in the API call modules to only return what will be useful for the UI.
+  - updateObject ✅
