@@ -43,11 +43,19 @@ Wed Jan 5 2022
         - Will need to figure out a strategy for this later...
       - Express route to fetch a list of buckets ✅
       - Express route to fetch objects in a bucket ✅
+        - `curl localhost:8080/objects/wi1ecoengncd7o6u`
       - Express route to create bucket ✅
+        - `curl -X POST localhost:8080/buckets/<name>`
       - ~~Express route to upload object~~
-      - Express route to delete bucket
+      - Express route to delete bucket ✅
+        - `curl -X "DELETE" localhost:8080/buckets/<name>`
       - Express route to delete object
+        - `curl -X "DELETE" localhost:8080/objects/<bucket>/<name>` ✅
       - Express route to rename object
+        - `curl -X "PUT" localhost:8080/objects/<bucket>/<name>/<newname>` ✅
+
+- `curl -X "PUT" localhost:8080/objects/glakfjhlksfmg53245235/pooper.jpg/pooper.jpg`
+
       - Dockerize and make CD ready
         - Add Dockerfile (check paths!), Dockerfile.local for local Docker testing and .dockerignore ✅
         - Write bash script to make it simple to run the Docker container locally for testing purposes ✅
@@ -69,6 +77,28 @@ Thu Jan 6 2022
 
 - Got the dockerization and dockerized testing done and updated code and docs in `basic-express` as well. When preparing the tf files for infra provisioning I realized that it's stupid to not code out all the app functionalities in this prototype/feature build, so went back and revised the goals and added _all_ CRUD operations to list of functionalities. Will now have to change the name of service and other files from `get-buckets-and-objects` to `storage-crud`.
   - Change name everywhere from from `get-buckets-and-objects` to `storage-crud`. ✅
-  - Document how to run [nodemon](https://www.npmjs.com/package/nodemon) for making life easier when building express apps ✅
-    - `nodemon ./server.js localhost 8080`
-  - Added a few new routes in `server.js`, and decided that the upload file functionality would be too hard for what I need to get up and running right now, will return to this later.
+- Document how to run [nodemon](https://www.npmjs.com/package/nodemon) for making life easier when building express apps ✅
+  - `nodemon ./server.js localhost 8080`
+- Added a few new routes in `server.js`, and decided that the upload file functionality would be too hard for what I need to get up and running right now, will return to this later.
+- Change structure of responses in express routes to include status codes and JSONified data. ✅
+
+Fri Jan 7 2022
+
+- Code out remaining 3 express routes for delete bucket, delete object and rename object (not sure if this will be put/patch).
+- Work out how to do error handling in node.js code and express routes, when there is an error the response status code should reflect that appropriately.
+- When sending form data it won't be possible to just provide that in the URL params, I need to start looking into how the express code can accept JSON objects in the request. I might need to use Postman to test this out.
+  - https://expressjs.com/en/4x/api.html#req.body
+    - Express has it's own body-parsing middleware, in the stack overflow blog linked below they use a node package called "body-parser", safe to assume both are fine.
+- **Understand best-practices for API development** and change the response objects/arrays appropriately, and whatever else I think I need to.
+  - "If we don’t follow commonly accepted conventions, then we confuse the maintainers of the API and the clients that use them since it’s different from what everyone expects."
+  - https://stackoverflow.blog/2020/03/02/best-practices-for-rest-api-design/
+
+Sat Jan 8 2022
+
+- Goal tonight is to code out and test delete object and rename object functionalities, then start refactoring the express code to do things like error handling and other API best-practice-y things.
+- Look into req.body and how to unpack that from it's JSON form using middleware (more information in Jan 7 notes).
+  - "If you want to implement guards or any other logic in your route that relies on that id (of an existing user), you pass the userID in the params. Let's say you are submitting a form where a new user registers.. You don't want to send the credentials in the parameters since it's confidential data and easily accessible this way. Here it makes sense to put those values in the request-body and use therefore req.body.."
+    - https://stackoverflow.com/a/54903133/8379751
+- Read up on GCP storage, AWS S3, Azure Blob Storage use cases to get a feel for how you might be able to repackage this app for a client.
+- Some operations (e.g., updateObject) are returning tons of extraneous data we don't need, at some point I'll need to groom the response in the API call modules to only return what will be useful for the UI.
+  - updateObject ✅
