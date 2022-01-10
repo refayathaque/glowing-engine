@@ -105,7 +105,8 @@ Sat Jan 8 2022
   Sun Jan 9 2022
 
   - Working on error handling today, inserted try catch blocks in all the routes, and now have to code out the blocks in all routes.
-    - /buckets
+    - /buckets ✅
+      - Had to test using another SA that has NO access, since this route isn't expecting params I couldn't use invalid params, I had to test by blocking access
     - /objects/:bucket ✅
     - create - /buckets/:name ✅
     - delete - /buckets/:name ✅
