@@ -42,8 +42,9 @@ Wed Jan 5 2022
       - Code will need to be different prior to deployment because we won't be using this God-mode admin service account when deployed to Cloud Run
         - Will need to figure out a strategy for this later...
       - Express route to fetch a list of buckets ✅
+        - `curl localhost:8080/<bucket>`
       - Express route to fetch objects in a bucket ✅
-        - `curl localhost:8080/objects/wi1ecoengncd7o6u`
+        - `curl localhost:8080/objects/<name>`
       - Express route to create bucket ✅
         - `curl -X POST localhost:8080/buckets/<name>`
       - ~~Express route to upload object~~
@@ -53,9 +54,6 @@ Wed Jan 5 2022
         - `curl -X "DELETE" localhost:8080/objects/<bucket>/<name>` ✅
       - Express route to rename object
         - `curl -X "PUT" localhost:8080/objects/<bucket>/<name>/<newname>` ✅
-
-- `curl -X "PUT" localhost:8080/objects/glakfjhlksfmg53245235/pooper.jpg/pooper.jpg`
-
       - Dockerize and make CD ready
         - Add Dockerfile (check paths!), Dockerfile.local for local Docker testing and .dockerignore ✅
         - Write bash script to make it simple to run the Docker container locally for testing purposes ✅
@@ -101,4 +99,16 @@ Sat Jan 8 2022
     - https://stackoverflow.com/a/54903133/8379751
 - Read up on GCP storage, AWS S3, Azure Blob Storage use cases to get a feel for how you might be able to repackage this app for a client.
 - Some operations (e.g., updateObject) are returning tons of extraneous data we don't need, at some point I'll need to groom the response in the API call modules to only return what will be useful for the UI.
+
   - updateObject ✅
+
+  Sun Jan 9 2022
+
+  - Working on error handling today, inserted try catch blocks in all the routes, and now have to code out the blocks in all routes.
+    - /buckets
+    - /objects/:bucket ✅
+    - create - /buckets/:name ✅
+    - delete - /buckets/:name ✅
+    - delete - /objects/:bucket/:name ✅
+    - put - /objects/:bucket/:name/:newname ✅
+  - If required params are not provided then route should return 4xx instead of invoking storage operation modules.
