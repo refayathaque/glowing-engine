@@ -42,7 +42,7 @@ Wed Jan 5 2022
       - Code will need to be different prior to deployment because we won't be using this God-mode admin service account when deployed to Cloud Run
         - Will need to figure out a strategy for this later...
       - Express route to fetch a list of buckets ✅
-        - `curl localhost:8080/<bucket>`
+        - `curl localhost:8080/bucket`
       - Express route to fetch objects in a bucket ✅
         - `curl localhost:8080/objects/<name>`
       - Express route to create bucket ✅
@@ -102,14 +102,25 @@ Sat Jan 8 2022
 
   - updateObject ✅
 
-  Sun Jan 9 2022
+Sun Jan 9 2022
 
-  - Working on error handling today, inserted try catch blocks in all the routes, and now have to code out the blocks in all routes.
-    - /buckets ✅
-      - Had to test using another SA that has NO access, since this route isn't expecting params I couldn't use invalid params, I had to test by blocking access
-    - /objects/:bucket ✅
-    - create - /buckets/:name ✅
-    - delete - /buckets/:name ✅
-    - delete - /objects/:bucket/:name ✅
-    - put - /objects/:bucket/:name/:newname ✅
-  - If required params are not provided then route should return 4xx instead of invoking storage operation modules.
+- Working on error handling today, inserted try catch blocks in all the routes, and now have to code out the blocks in all routes.
+  - /buckets ✅
+    - Had to test using another SA that has NO access, since this route isn't expecting params I couldn't use invalid params, I had to test by blocking access
+  - /objects/:bucket ✅
+  - create - /buckets/:name ✅
+  - delete - /buckets/:name ✅
+  - delete - /objects/:bucket/:name ✅
+  - put - /objects/:bucket/:name/:newname ✅
+
+Mon Jan 10 2022
+
+- If required params are not provided then route should return 4xx instead of invoking storage operation modules.
+  - Don't need to do any error handling in routes for this because if the request is missing params it wouldn't even hit the route, as the route definition includes the params.
+- Data grooming, make sure all routes are returning data that will actually be useful in the UI, updateObject (put - /objects/:bucket/:name/:newname) is already done, so need to check the responses for all other routes.
+  - get - /buckets ✅
+  - get - /objects/:bucket ✅
+  - create - /buckets/:name ✅
+  - delete - /buckets/:name ✅
+  - delete - /objects/:bucket/:name ✅
+  - put - /objects/:bucket/:name/:newname ✅
