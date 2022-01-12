@@ -131,4 +131,5 @@ Tue Jan 11 2022
 - Build out all necessary tf files using prototype-a as reference. ✅
   - Make sure SA associate with cloud run service has necessary permissions to interact with storage. ✅
     - This will be different to what's in the prototype-a code because that microservice did nothing but return 'hello world'. ✅
-- Build out OpenAPI spec file based on what is in `server.js`
+- Build out OpenAPI spec file based on what is in `server.js` ✅
+- Do stage 1 of terraform deployment (stage 1 being the artifact registry repo creation and the docker image build and push, i.e., running `run-me-first.sh`) ✅
