@@ -133,3 +133,35 @@ Tue Jan 11 2022
     - This will be different to what's in the prototype-a code because that microservice did nothing but return 'hello world'. ✅
 - Build out OpenAPI spec file based on what is in `server.js` ✅
 - Do stage 1 of terraform deployment (stage 1 being the artifact registry repo creation and the docker image build and push, i.e., running `run-me-first.sh`) ✅
+  - ^ need to re-do because **image code is using authentication based on local SA key**, so the image code needs to be changed
+
+Wed Jan 12 2022
+
+- _Wrote day off_ 😀
+
+Thu Jan 13 2022
+
+- Redo stage 1 of terraform deployment (stage 1 being the artifact registry repo creation and the docker image build and push, i.e., running `run-me-first.sh`) since the image code is not set up correctly, it's currently set up to use the SA local key to interact with storage.
+  - This is not a good approach, **for testing locally (both dockerized [`bash local-docker-testing.sh`] and non-dockerized[`nodemon ./server.js localhost 8080`])** I should have a separate SA with keys, **I should no tbe using the one I have with admin privileges for terraform infra provisioning**.
+    - Create new SA key and put in `gcp-infra-and-microservices/nodejs-containers/storage-crud` and **ADD TO .gitignore** ✅
+    - Edit key path in `./secrets.js` ✅
+- Explore node.js env variables so I don't have to change existing container image code depending on whether I am testing locally or deploying it to cloud run, there should be a way to turn off the use of local test SA key when building the image for cloud run deployment. ✅
+  - Dockerfile for cloud run should have build environment variable `AUTH=dev` ✅
+  - Dockerfile.local for local testing should have build environment variable `AUTH=local` ✅
+    The `local-docker-testing.sh` script uses ^ as the Dockerfile
+- Source code should have conditionality to use/not use local test SA key, prototype this out with `createBucket.js` and test to make sure this works when running the docker image. ✅
+  - Module called `client.js` checks the environment variable `AUTH`, and based on what it sees sets the storage client to have/omit the SA key and project id. This module is then imported into storage operation modules.
+  - Code out ^ refactor in all other operation modules and test while running docker container
+    - fetch a list of buckets
+      - `curl localhost:8080/bucket`
+    - fetch objects in a bucket
+      - `curl localhost:8080/objects/<name>`
+    - create bucket
+      - `curl -X POST localhost:8080/buckets/<name>`
+    - ~~upload object~~
+    - delete bucket
+      - `curl -X "DELETE" localhost:8080/buckets/<name>`
+    - delete object
+      - `curl -X "DELETE" localhost:8080/objects/<bucket>/<name>`
+    - rename object
+      - `curl -X "PUT" localhost:8080/objects/<bucket>/<name>/<newname>`
