@@ -166,5 +166,6 @@ Fri Jan 14 2022
     - `curl -X "DELETE" localhost:49160/buckets/<name>`
   - delete object ✅
     - `curl -X "DELETE" localhost:49160/objects/<bucket>/<name>`
-  - rename object 
+  - rename object ✅
     - `curl -X "PUT" localhost:49160/objects/<bucket>/<name>/<newname>`
+- Create `Dockerfile.infra` to build container image in part 1 of infra deployment where we're provisioning the artifact registry repository, building the container image and pushing it to the repository. We couldn't use `Dockerfile` since that's set up specifically for Cloud Build, we also couldn't use `Dockerfile.local` because that's configured for local dockerized testing.
