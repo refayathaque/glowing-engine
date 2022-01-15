@@ -168,4 +168,19 @@ Fri Jan 14 2022
     - `curl -X "DELETE" localhost:49160/objects/<bucket>/<name>`
   - rename object ✅
     - `curl -X "PUT" localhost:49160/objects/<bucket>/<name>/<newname>`
-- Create `Dockerfile.infra` to build container image in part 1 of infra deployment where we're provisioning the artifact registry repository, building the container image and pushing it to the repository. We couldn't use `Dockerfile` since that's set up specifically for Cloud Build, we also couldn't use `Dockerfile.local` because that's configured for local dockerized testing.
+- Create `Dockerfile.infra` to build container image in part 1 of infra deployment where we're provisioning the artifact registry repository, building the container image and pushing it to the repository. We couldn't use `Dockerfile` since that's set up specifically for Cloud Build, we also couldn't use `Dockerfile.local` because that's configured for local dockerized testing. ✅
+
+Sat Jan 15 2022
+
+- Part 1 of the infra deployment is done, so will proceed to provision the remain infra resources and test to see if things work 🤞🏽
+  - Worked on the openapi spec yaml file a few days ago, and that is entirely untested, so should expect some issues when testing using api gateway
+    - First issue while trying to provision api gateway, so adding these operation parameters in spec file using guidance from [here](https://swagger.io/docs/specification/2-0/paths-and-operations/) ✅
+      ```
+       Error creating ApiConfig: googleapi: Error 400: Cannot convert to service config.
+      │ 'location: "api-configs/openapi-spec-storage-crud.yaml: Operation \'get\' in path \'/buckets\'"
+      │ kind: ERROR
+      │ message: "Operation does not have the required \'operationId\' field. Please specify unique value for \'operationId\' field for all operations."
+      ```
+    - The api gateway managed service enablement could error a few times before finally working, so keep trying until there are no errors.
+    - There was an error with the way I was declaring `service_account_name` in the cloud run resource, I had it as `service_account_name = "serviceAccount:${google_service_account.cloud_run_storage_crud_sa.email}"` because that's the way SAs are declared in some other tf resources, but it should be declared in the simple tf sense `service_account_name = google_service_account.cloud_run_storage_crud_sa.email` - got this golden nugget of help from [here](https://github.com/erkolson/iac-cloudrun/blob/00e09dd5c389510729fb337267e6bc764bdd5b7d/main.tf)
+- Part 2 of the infra deployment is done, need to now test and see what worked and what didn't.
