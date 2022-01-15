@@ -50,10 +50,10 @@ Wed Jan 5 2022
       - ~~Express route to upload object~~
       - Express route to delete bucket ✅
         - `curl -X "DELETE" localhost:8080/buckets/<name>`
-      - Express route to delete object
-        - `curl -X "DELETE" localhost:8080/objects/<bucket>/<name>` ✅
-      - Express route to rename object
-        - `curl -X "PUT" localhost:8080/objects/<bucket>/<name>/<newname>` ✅
+      - Express route to delete object ✅
+        - `curl -X "DELETE" localhost:8080/objects/<bucket>/<name>`
+      - Express route to rename object ✅
+        - `curl -X "PUT" localhost:8080/objects/<bucket>/<name>/<newname>`
       - Dockerize and make CD ready
         - Add Dockerfile (check paths!), Dockerfile.local for local Docker testing and .dockerignore ✅
         - Write bash script to make it simple to run the Docker container locally for testing purposes ✅
@@ -151,17 +151,20 @@ Thu Jan 13 2022
     The `local-docker-testing.sh` script uses ^ as the Dockerfile
 - Source code should have conditionality to use/not use local test SA key, prototype this out with `createBucket.js` and test to make sure this works when running the docker image. ✅
   - Module called `client.js` checks the environment variable `AUTH`, and based on what it sees sets the storage client to have/omit the SA key and project id. This module is then imported into storage operation modules.
-  - Code out ^ refactor in all other operation modules and test while running docker container
-    - fetch a list of buckets
-      - `curl localhost:8080/bucket`
-    - fetch objects in a bucket
-      - `curl localhost:8080/objects/<name>`
-    - create bucket
-      - `curl -X POST localhost:8080/buckets/<name>`
-    - ~~upload object~~
-    - delete bucket
-      - `curl -X "DELETE" localhost:8080/buckets/<name>`
-    - delete object
-      - `curl -X "DELETE" localhost:8080/objects/<bucket>/<name>`
-    - rename object
-      - `curl -X "PUT" localhost:8080/objects/<bucket>/<name>/<newname>`
+
+Fri Jan 14 2022
+
+- Code out ^ refactor in all other operation modules and test while running docker container
+  - fetch a list of buckets ✅
+    - `curl localhost:49160/bucket`
+  - fetch objects in a bucket ✅
+    - `curl localhost:49160/objects/<name>`
+  - create bucket ✅
+    - `curl -X POST localhost:49160/buckets/<name>`
+  - ~~upload object~~
+  - delete bucket ✅
+    - `curl -X "DELETE" localhost:49160/buckets/<name>`
+  - delete object ✅
+    - `curl -X "DELETE" localhost:49160/objects/<bucket>/<name>`
+  - rename object 
+    - `curl -X "PUT" localhost:49160/objects/<bucket>/<name>/<newname>`
