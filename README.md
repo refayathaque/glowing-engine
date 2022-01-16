@@ -173,7 +173,7 @@ Fri Jan 14 2022
 Sat Jan 15 2022
 
 - Part 1 of the infra deployment is done, so will proceed to provision the remain infra resources and test to see if things work 🤞🏽
-  - Worked on the openapi spec yaml file a few days ago, and that is entirely untested, so should expect some issues when testing using api gateway
+  - Worked on the openapi spec yaml file a few days ago, and that is entirely untested, so should expect some issues when testing using api gateway.
     - First issue while trying to provision api gateway, so adding these operation parameters in spec file using guidance from [here](https://swagger.io/docs/specification/2-0/paths-and-operations/) ✅
       ```
        Error creating ApiConfig: googleapi: Error 400: Cannot convert to service config.
@@ -183,4 +183,20 @@ Sat Jan 15 2022
       ```
     - The api gateway managed service enablement could error a few times before finally working, so keep trying until there are no errors.
     - There was an error with the way I was declaring `service_account_name` in the cloud run resource, I had it as `service_account_name = "serviceAccount:${google_service_account.cloud_run_storage_crud_sa.email}"` because that's the way SAs are declared in some other tf resources, but it should be declared in the simple tf sense `service_account_name = google_service_account.cloud_run_storage_crud_sa.email` - got this golden nugget of help from [here](https://github.com/erkolson/iac-cloudrun/blob/00e09dd5c389510729fb337267e6bc764bdd5b7d/main.tf)
-- Part 2 of the infra deployment is done, need to now test and see what worked and what didn't.
+- Part 2 of the infra deployment is done, need to now test and see what worked and what didn't, and as expected there were issues with api gateway openapi spec yaml.
+  - Hitting the cloud run endpoint with GET paths work ✅
+  - Hitting the api gateway default hostname endpoint with all 6 paths work ✅
+    - GET https://storage-crud-gw-xxxxxxxx.uk.gateway.dev/buckets?key=? ✅
+    - GET https://storage-crud-gw-xxxxxxxx.uk.gateway.dev/objects/5415425425442fasfsdfasfasdf?key=? ✅
+    - POST https://storage-crud-gw-xxxxxxxx.uk.gateway.dev/buckets/testing123?key=? ✅
+      - `curl -X POST https://storage-xxxx-gw-xxxxxxxx.uk.gateway.dev/buckets/testing?key=?`
+      - Getting error `{"code":405,"message":"The current request is matched to the defined url template \"/buckets/{name}\" but its http method is not allowed"}`
+      - Checked cloud run logs and there are no POST entries, but when hitting the cloud run endpoint with the bucket name param there is a POST log and the bucket is successfully created, so the **problem is in the open spec yaml and api gateway implementation**.
+        - `curl -X POST https://storage-xxxx-microservice-xxbeddxxxx-uk.a.run.app/buckets/falksjfalkj32412341234`
+      - Fixed this issue by consolidating both the POST and DELETE http methods associated with the `/buckets/{name}` path, so this is **important: if a path allows two different methods, in the openapi spec yaml, both methods need ot be under that path**. It was erroring before because I had _two declarations of the same path for POST and DELETE_, and used [this](https://github.com/OAI/OpenAPI-Specification/blob/main/examples/v2.0/yaml/petstore-simple.yaml) to make the correction.
+    - DELETE https://storage-crud-gw-xxxxxxxx.uk.gateway.dev/buckets/testing123?key=? ✅
+    - DELETE https://storage-crud-gw-xxxxxxxx.uk.gateway.dev/objects/?key=? ✅
+    - PUT https://storage-crud-gw-xxxxxxxx.uk.gateway.dev/buckets?key=? ✅
+- Also realized that the error code objects I crafted to be returned in express are not showing up because they are not in the open api spec file. So added in basic 4xx codes (I tried a 4xx wild card, but tf didn't like it and threw an error) as per guidance from [here](https://swagger.io/docs/specification/describing-responses/) in section "HTTP Status Codes". ✅
+  - Interestingly (and wonderfully), I only included 400, 401 and 404, but when I hit the api gateway endpoint to create a new bucket I got a 409 error in the correct object format (it came out the way I crafted the error response with express in `server.js`)
+    - `{"code":409,"message":"You already own this bucket. Please select another name."}`
