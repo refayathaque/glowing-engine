@@ -211,4 +211,4 @@ Mon Jan 17 2022
 
 Tue Jan 18 2022
 
-- Did some work around writing blog posts and figuring out what the DBA should be. Hmmmm.
+- Did some work around writing blog posts and figuring out what the DBA should be.
