@@ -219,3 +219,8 @@ Wed Jan 19 2022
 Thu Jan 18 2022
 
 - Goals for today: get back into React development by creating a reusable modal for the storage crud app, create a flow chart to organize work streams and other ideas ✅, email out creative brief to Sakina ✅.
+
+Fri Jan 21 2022
+
+- I will aim to publish my first blog post for `somtum.io`. For now, it will reside on Medium, but when the company website is somewhat ready I'll post it over there as well.
+  - To maintain focus, I will NOT build out the Firestore CRUD app API in parallel, I will look at the existing `prototype-b` infra code and the associated image and write the blog post based on those files.
