@@ -1,5 +1,3 @@
-- Design work is outsourced to Cedric because _comparative advantage_, will build out public facing for LLC website using this React project and his wireframe when ready. For now, this README will serve as a thought log and work tracker for everything app development.
-
 Sat Jan 1 2022
 
 - Starting to plan out the API build for the storage CRUD app, using the [Swagger OpenAPI guide](https://swagger.io/docs/specification/2-0/basic-structure/) and [Best practices in API design](https://swagger.io/resources/articles/best-practices-in-api-design/).
@@ -211,4 +209,13 @@ Mon Jan 17 2022
 
 Tue Jan 18 2022
 
-- Did some work around writing blog posts and figuring out what the DBA should be.
+- Found a DBA and registered domain: `somtum.io`
+- Did some work around writing a creative brief for designers to make me branding assets based on name.
+
+Wed Jan 19 2022
+
+- Did some work around writing a creative brief for designers to make me branding assets based on name.
+
+Thu Jan 18 2022
+
+- Goals for today: get back into React development by creating a reusable modal for the storage crud app, create a flow chart to organize work streams and other ideas ✅, email out creative brief to Sakina ✅.
