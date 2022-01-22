@@ -55,21 +55,18 @@ Paragraph 7 (Infra part 1)
 
 - `apis.tf`
   - We need to enable a bunch of Google Cloud services we will need to provision the infrastructure, without enabling these services terraform will not be able to provision and you'll get errors. The terraform code is written in a way where we've sequence the provisioning of all resources to only occur if their respective APIs have been enabled.
-- What is API Gateway and why do we need it?
-  - Advantage being I can change the backend to something else if I want to
 - How do I push the image to Google Cloud?
 - What do I need to do prior to pushing?
   - What is Artifact Registry? What does the `run-me-first.sh` script do?
 
 Paragraph 8 (Infra part 2) Provisioning Google Cloud infrastructure with Terraform
 
-- Enabling appropriate APIs to allow us to interact with services in Google Cloud
+- "Using [API Gateway](https://cloud.google.com/api-gateway/docs/about-api-gateway#api-gateway), app developers consume your REST APIs to implement apps. Because all APIs are hosted on API Gateway, app developers see a consistent interface across all backend services. By deploying your APIs on API Gateway, you can update the backend service, or even move the service from one architecture to another, without having to change the API. As long as the API to your service stays consistent, app developers will not have to modify deployed apps because of underlying changes on your backend."
 - Cloud Run
 - IAM
 - Cloud Build
   - Enable in UI first
 - API Gateway
--
 
 Paragraph 9 (Testing)
 
