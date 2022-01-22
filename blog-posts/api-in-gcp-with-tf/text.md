@@ -33,7 +33,7 @@ Paragraph 4
     - "Create reproducible infrastructure Provision consistent testing, staging, and production environments with the same configuration."
 - ^ all from terraform homepage
 - Use this [link](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started) to set up Terraform in your local environment and ready to provision infrastructure in your project.
-  - The sample code's `prototype-b` directory contains all the terraform code you will need to build this API, for this initial set up portion of this excercise, copy over the `provider.tf` file to your local working directory and run the terraform commands from this working directory. You'll see that the provider references terraform variables and that's something you can set up using the code [here](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started), all you need to do is fill in the default values.
+  - The sample code's `prototype-b` directory contains all the terraform code you will need to build this API, for this initial set up portion of this exercise, copy over the `provider.tf` file to your local working directory and run the terraform commands from this working directory. You'll see that the provider references terraform variables and that's something you can set up using the code [here](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started), all you need to do is fill in the default values.
     - The first three values you can find in the Google Cloud console
     - The service account key will be the path name to the `.json` file, you can create this key and download it using this [link](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating), set the role to Editor (under "Basic")
       - We will discuss IAM and Service Accounts a little more in depth in later parts of this guide, for now just know that this is something you need to authorize Terraform to create infrastructure in your Google Cloud project.
@@ -57,20 +57,28 @@ Paragraph 7 (Infra part 1)
   - We need to enable a bunch of Google Cloud services we will need to provision the infrastructure, without enabling these services terraform will not be able to provision and you'll get errors. The terraform code is written in a way where we've sequence the provisioning of all resources to only occur if their respective APIs have been enabled.
 - "[Artifact Registry](https://cloud.google.com/artifact-registry) is a single place for your organization to manage container images and language packages (such as Maven and npm). It is fully integrated with Google Cloud’s tooling and runtimes and comes with support for native artifact protocols. This makes it simple to integrate it with your CI/CD tooling to set up automated pipelines."
 - What does the `run-me-first.sh` script do?
-  - You have to change the container image build variables before running this script, your region and project id will differ, if you clone/fork this the entire repo then you can keep the image and image repo names as they are
-  - Enables Artifact Registry API
-  - Runs ONLY the part of our terraform code that provisions the Artifact Registry repository.
+  - You have to change the container image build variables before running this script, your region and project id will differ, if you clone/fork this the entire repo then you can keep the image name and artifact registry repo name as they are
+  - Enables Artifact Registry API, and you can find this Terraform resource in the `apis.tf` file
+  - Runs ONLY the part of our terraform code that provisions the Artifact Registry repository, this resource is in the `artifact_registry.tf`. It's important to note here that Terraform themselves frown upon this practice of using `terraform apply -target` to provision **select** resources, but until we can find a better approach for Docker container image provisioning to Cloud Run we will maintain this approach.
   - Builds our Docker Node.js container image and pushes it to Artifact Registry repository created in the previous step.
 - At this point, the bash script above executed all commands successfully, you will have provisioned the Artifact Registry repository and pushed the Node.js container image into it. Therefore we are now ready to provision all remaining infrastructure, especially the Cloud Run service which needed the container image to be available from Artifact Registry.
+- Enable app that links Google Cloud to GitHub for Continuous Delivery with Cloud Build to work, Terraform will not be able to provision the Cloud Build resource without you having done this first.
 
 Paragraph 8 (Infra part 2) Provisioning Google Cloud infrastructure with Terraform
 
-- "Using [API Gateway](https://cloud.google.com/api-gateway/docs/about-api-gateway#api-gateway), app developers consume your REST APIs to implement apps. Because all APIs are hosted on API Gateway, app developers see a consistent interface across all backend services. By deploying your APIs on API Gateway, you can update the backend service, or even move the service from one architecture to another, without having to change the API. As long as the API to your service stays consistent, app developers will not have to modify deployed apps because of underlying changes on your backend."
-- Cloud Run
-- IAM
-- Cloud Build
-  - Enable in UI first
-- API Gateway
+- We won't go into too much detail talking about the terraform code, as it's all discernible upon reading the [documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs), however, it would be remiss of us if we didn't mention that it's not the best, it's pretty apparent that Hashicorp (the creators of terraform) have decided to allocate more of their engineering prowess on AWS and Azure. In this section of the guide, we will briefly touch upon each of the `.tf` files you see starting with `apis.tf` and ending with `iam.tf`.
+- The `apis.tf` file is provisioning all the service APIs we will need to provision all our resources.
+- The `cloud_run.tf` file is provisioning the Cloud Run service, and the key thing to note here is the `containers` block where we declare what image it needs to use when provisioning itself.
+- The `cloud_build.tf` file is provisioning the
+- The `api_gateway.tf` file is provisioning the API, the gateway and the config. While the the API itself serves as the parent component of the architecture, the gateway and the config sit within it as child components.
+  - "Using [API Gateway](https://cloud.google.com/api-gateway/docs/about-api-gateway#api-gateway), app developers consume your REST APIs to implement apps. Because all APIs are hosted on API Gateway, app developers see a consistent interface across all backend services. By deploying your APIs on API Gateway, you can update the backend service, or even move the service from one architecture to another, without having to change the API. As long as the API to your service stays consistent, app developers will not have to modify deployed apps because of underlying changes on your backend."
+  - "An API defined on API Gateway consists of [two main components](https://cloud.google.com/api-gateway/docs/deployment-model): API config: The API configuration created when you upload an API definition. You create the API definition as an OpenAPI spec. If your API manages gRPC services on Cloud Run, you can define your API with a gRPC service definition and configuration. Each time you upload an API definition, API Gateway creates a new API config. That is, you can create an API config **but you cannot later modify it**. If you later edit the API definition in the OpenAPI spec or gRPC service definition, and then upload the edited API definition, you create a new API config. Gateway: An Envoy-based, high-performance, scalable proxy that hosts the deployed API config. Deploying an API config to a gateway creates the external facing URL that your API clients use to access the API."
+  - More details on the OpenAPI Spec YAML file this resource relies will be talked about in the following section.
+- The `iam.tf` file is provisioning the
+- The `cloud_build.tf` file is provisioning the
+  - As mentioned earlier, you MUST enable the Github app in the Google Cloud console first
+
+Paragraph 9 (OpenAPI Spec YAML)
 
 Paragraph 9 (Testing)
 
@@ -80,3 +88,7 @@ Last Paragraph (Conclusion)
 
 - For help with local testing please reach out
 - If something doesn't work also reach out and I'll try to help you out as much as possible
+- Ideal scenario we want to block direct access to the Cloud Run service via the endpoint, and only allow the public internet access to it via the API Gateway endpoint, this is something we might explore and provide as an update to this guide.
+
+GO AND MANUALLY DELETE ALL RESOURCES EXCEPT API ENABLEMENT
+LOST TF STATE FILES AND TF LIBS, NEED TO REINIT AND TEST
