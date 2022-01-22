@@ -55,9 +55,13 @@ Paragraph 7 (Infra part 1)
 
 - `apis.tf`
   - We need to enable a bunch of Google Cloud services we will need to provision the infrastructure, without enabling these services terraform will not be able to provision and you'll get errors. The terraform code is written in a way where we've sequence the provisioning of all resources to only occur if their respective APIs have been enabled.
-- How do I push the image to Google Cloud?
-- What do I need to do prior to pushing?
-  - What is Artifact Registry? What does the `run-me-first.sh` script do?
+- "[Artifact Registry](https://cloud.google.com/artifact-registry) is a single place for your organization to manage container images and language packages (such as Maven and npm). It is fully integrated with Google Cloud’s tooling and runtimes and comes with support for native artifact protocols. This makes it simple to integrate it with your CI/CD tooling to set up automated pipelines."
+- What does the `run-me-first.sh` script do?
+  - You have to change the container image build variables before running this script, your region and project id will differ, if you clone/fork this the entire repo then you can keep the image and image repo names as they are
+  - Enables Artifact Registry API
+  - Runs ONLY the part of our terraform code that provisions the Artifact Registry repository.
+  - Builds our Docker Node.js container image and pushes it to Artifact Registry repository created in the previous step.
+- At this point, the bash script above executed all commands successfully, you will have provisioned the Artifact Registry repository and pushed the Node.js container image into it. Therefore we are now ready to provision all remaining infrastructure, especially the Cloud Run service which needed the container image to be available from Artifact Registry.
 
 Paragraph 8 (Infra part 2) Provisioning Google Cloud infrastructure with Terraform
 
