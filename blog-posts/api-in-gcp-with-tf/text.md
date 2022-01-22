@@ -69,6 +69,7 @@ Paragraph 8 (Infra part 2) Provisioning Google Cloud infrastructure with Terrafo
 - Cloud Build
   - Enable in UI first
 - API Gateway
+-
 
 Paragraph 9 (Testing)
 
