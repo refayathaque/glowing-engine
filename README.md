@@ -224,3 +224,14 @@ Fri Jan 21 2022
 
 - I will aim to publish my first blog post for `somtum.io`. For now, it will reside on Medium, but when the company website is somewhat ready I'll post it over there as well.
   - To maintain focus, I will NOT build out the Firestore CRUD app API in parallel, I will look at the existing `prototype-b` infra code and the associated image and write the blog post based on those files.
+
+Sat Jan 22 2022
+
+- Drafting blog post.
+
+Sun Jan 23 2022
+
+- Complete first draft of blog post. ✅
+- Made the mistake of deleting the infra repo when I changed the name in remote, so I lost the tf state file. Because of this mistake, I have to go to the console and manually delete all the resources I provisioned with tf before. ✅
+- Successfully perform part 1 infra provisioning with `run-me-first.sh`. ✅
+- Successfully perform part 2 infra provisioning. ✅

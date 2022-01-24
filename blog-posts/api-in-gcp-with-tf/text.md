@@ -14,6 +14,13 @@ Paragraph 2
 - E.g., developers can use the endpoints we publish by creating this API to have their apps, or clients, interact with Google Cloud Storage.
 - Google storage is a managed service that allows you to store any kind of files in groupings called "buckets", this is essentially the same as AWS' S3, or Simple Storage Service.
 
+~~~~~~~~~~~~~~~
+Create your own API with Terraform in Google Cloud
+All apps, be they web or mobile, have a "backend" they communicate with for users to do consume, produce or alter existing data. The layer in between the app, a.k.a. client, and the backend is an API (Application Programming Interface). Google Cloud is a cloud provider just like Microsoft Azure and AWS (Amazon Web Services), and you can use those providers to create APIs as well, but we at somtum.io like the Google Cloud implementation. Google Cloud defines an API as, "…an interface that makes it easy for one application to consume capabilities or data from another application. By defining stable, simple, and well-documented entry points, APIs enable developers to easily access and reuse application logic built by other developers."
+So why did we feel the need to build an API? As we build up somtum.io, we need to cover all bases of the software landscape, as a true value-provider to small businesses, we cannot limit ourselves to just "frontend", "backend", "cloud" or"devops", we need to do it all. In most bonafide software development teams there are frontend developers building the client, and coding the client to make RESTful API calls via HTTP to the backend. While frontend developers build the client, backend developers are building out the API for the client to be able to access the backend and deliver user functionality. Frontend developers only need to know the API endpoints their client needs to hit to perform required functions, these endpoints are published as part of the API by the backend engineers.
+Our goal was to create a simple prototype of an API to serve as a baseline for all future projects. We created this prototype to allow users to interact with Google Cloud Storage, which is a managed service that allows you to store any kind of file in groupings called "buckets", this is essentially the same as AWS' S3, or AWS Simple Storage Service. Specifically, this API lets users create buckets, list buckets, list objects inside buckets, rename objects and delete buckets. In practice, based on this API, frontend developers can use the published endpoints in their clients and interact with Google Cloud Storage.
+~~~~~~~~~~~~~~~
+
 Paragraph 3
 
 - While there are many approaches to API development, we’ve adopted the Google Cloud prescribed methodology, which dictates the use of their API Gateway service and the [Swagger OpenAPI Specification Version 2](https://swagger.io/docs/specification/basic-structure/).
@@ -31,6 +38,7 @@ Paragraph 4
   - Why use it?
     - "Codify your application infrastructure - Reduce human error and increase automation by provisioning infrastructure as code."
     - "Create reproducible infrastructure Provision consistent testing, staging, and production environments with the same configuration."
+      - Because of this, you are able to clone our repo and and provision _identical_ infrastructure in your own Google Cloud project.
 - ^ all from terraform homepage
 - Use this [link](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started) to set up Terraform in your local environment and ready to provision infrastructure in your project.
   - The sample code's `prototype-b` directory contains all the Terraform code you will need to build this API, for this initial set up portion of this exercise, copy over the `provider.tf` file to your local working directory and run the Terraform commands from this working directory. You'll see that the provider references Terraform variables and that's something you can set up using the code [here](https://github.com/refayathaque/somtum.io-infra-and-images#steps), all you need to do is fill in the default values.
@@ -62,7 +70,8 @@ Paragraph 7 (Infra part 1)
   - Runs ONLY the part of our Terraform code that provisions the Artifact Registry repository, this resource is in the `artifact_registry.tf`. It's important to note here that Terraform themselves frown upon this practice of using `terraform apply -target` to provision **select** resources, but until we can find a better approach for Docker container image provisioning to Cloud Run we will maintain this approach.
   - Builds our Docker Node.js container image and pushes it to Artifact Registry repository created in the previous step.
 - At this point, the bash script above executed all commands successfully, you will have provisioned the Artifact Registry repository and pushed the Node.js container image into it. Therefore we are now ready to provision all remaining infrastructure, especially the Cloud Run service which needed the container image to be available from Artifact Registry.
-- Enable app that links Google Cloud to GitHub for Continuous Delivery with Cloud Build to work, Terraform will not be able to provision the Cloud Build resource without you having done this first.
+- Enable the app that links Google Cloud to GitHub for Continuous Delivery with Cloud Build to work, Terraform will not be able to provision the Cloud Build resource without you having done this first.
+  - screenshot1
 
 Paragraph 8 (Infra part 2) Provisioning Google Cloud infrastructure with Terraform
 
@@ -79,28 +88,47 @@ Paragraph 8 (Infra part 2) Provisioning Google Cloud infrastructure with Terrafo
   - "A principal can be a Google Account (for end users), a service account (for applications and compute workloads), a Google group, or a Google Workspace account or Cloud Identity domain that can access a resource. The identity of a principal is an email address associated with a user, service account, or Google group; or a domain name associated with a Google Workspace account or a Cloud Identity domain."
   - "A role is a collection of permissions. Permissions determine what operations are allowed on a resource. When you grant a role to a principal, you grant all the permissions that the role contains."
   - "The IAM policy is a collection of role bindings that bind one or more principals to individual roles. When you want to define who (principal) has what type of access (role) on a resource, you create a policy and attach it to the resource."
+- If you're interested in learning more about how we created our roles, you can take a peek at the code and look for Terraform resource types `google_project_iam_custom_role`. You'll notice that in the permissions argument we have an array with specific Google Cloud IAM permissions, and the reason we did this is to adhere to the Cloud agnostic security "Principle of Least Privilege". Google Cloud [Documentation](https://cloud.google.com/blog/products/application-development/least-privilege-for-cloud-functions-using-cloud-iam) explains this key topic as: "The principle of least privilege states that a resource should only have access to the exact resource(s) it needs in order to function. For example, if a service is performing an automated database backup, the service should be restricted to read-only permissions on exactly one database. Similarly, if a service is only responsible for encrypting data, it should not have permissions for decrypting data. Providing too few permissions prohibits the service from completing its task, but providing too many permissions can have rippling security ramifications."
 - The `storage.tf` file is provisioning 3 buckets for the purposes of testing at the end, and only one of these buckets will have an object inside, with the object being a `test.txt` file.
 
 Paragraph 9 (OpenAPI Spec YAML)
 
 - "An OpenAPI document describes the surface of your REST API, and defines information such as: The name and description of the API, The individual endpoints (paths) in the API, How the callers are authenticated"
 - "API Gateway supports APIs that are described using the OpenAPI specification, version 2.0. Your API can be implemented using any publicly available REST framework such as Django or Jersey. You describe your API in a YAML file referred to as an OpenAPI document. This page describes some of the benefits to using OpenAPI, shows a basic OpenAPI document, and provides additional information to help you get started with OpenAPI. One of the primary benefits to using OpenAPI is for documentation; once you have an OpenAPI document that describes your API, it is easy to generate reference documentation for your API. There other benefits to using OpenAPI. For example, you can: Generate client libraries in dozens of languages, Generate server stubs. Use projects to verify your conformance and to generate samples."
-- Our YAML file can be found in the directory `api-configs` within the `prototype-b` directory in the repo, and upon opening it you'll see that we wrote this YAML based on guidance from the Google Cloud [API Gateway](https://cloud.google.com/api-gateway/docs/openapi-overview) and [OpenAPI](https://swagger.io/docs/specification/2-0/basic-structure/) documentation. The YAML file also matches how we've set up the Express.js routes in the container image source [code](https://github.com/refayathaque/somtum.io-infra-and-images/blob/main/nodejs-containers/storage-crud/server.js). For example, the GET method to fetch all objects in a bucket is described by the path `/objects/{bucket}` with the parameter being `{bucket`, and it's the same in our container image codebase's `server.js` file, `app.get("/objects/:bucket", async (req, res) => {`.
+- Our YAML file can be found in the directory `api-configs` within the `prototype-b` directory in the repo, and upon opening it you'll see that we wrote this YAML based on guidance from the Google Cloud [API Gateway](https://cloud.google.com/api-gateway/docs/openapi-overview) and [OpenAPI](https://swagger.io/docs/specification/2-0/basic-structure/) documentation. The YAML file also matches how we've set up the Express.js routes in the container image source [code](https://github.com/refayathaque/somtum.io-infra-and-images/blob/main/nodejs-containers/storage-crud/server.js). For example, the GET method to fetch all objects in a bucket is described by the path `/objects/{bucket}` with the parameter being `{bucket}`, and it's the same in our container image codebase's `server.js` file, `app.get("/objects/:bucket", async (req, res) => {`.
 
 Paragraph 10 (Testing)
 
-- Now that we've gone over the code and the main concepts, we can actually provision the second group of infrastructure, so run `terraform apply --auto-approve` and wait and see your Google Cloud services get created! Terraform could throw some errors in relation to API Gateway, and if you just try to provision again using the command above it should be successful the second time around.
-- To test that our API is working as expected we’ll take the API Gateway default hostname returned by Terraform and append the routes described in the open api spec file, inserting parameters wherever necessary.
+- Now that we've gone over the code and the main concepts, we can actually provision the second group of infrastructure.
+- Ensure that you have the Github app in the Google Cloud console.
+- Run `terraform apply --auto-approve` and wait and see your Google Cloud services get created! Terraform could throw some errors in relation to API Gateway, and if you just try to provision again using the command above it should be successful the second time around.
+  - Screenshot2
+- To test that our API is working as expected we’ll take the API Gateway default hostname returned by Terraform and append the routes described in the open api spec file, inserting parameters wherever necessary. We'll be using the `curl` command to make requests to our backend using GET, POST and PUT methods, the samples below should help you craft the URLs. Since we used a random string generator to name the 3 test buckets (look at `storage.tf`) you should make a note of the bucket names, and you will see all 3 buckets and their names once you run the first curl command in the list below, which will fetch all the buckets in your project.
+- Before testing to make sure your API works, you'll need to get an [API key](https://cloud.google.com/docs/authentication/api-keys#creating_an_api_key) from the Google Cloud console
+  - Screenshot3
+- Your default hostname will look something like this `https://storage-crud-gw-xxxxxxxx.uk.gateway.dev`
+- Test curl commands:
+- `curl {api_gateway_default_hostname}/buckets?key={API_key}`
+- `curl {api_gateway_default_hostname}/objects/{bucket_name}?key={API_key}`
+- `curl -X POST {api_gateway_default_hostname}/buckets/{bucket_name}?key={API_key}`
+  - You can check that your new bucket was created by executing the first curl command
+- `curl -X DELETE {api_gateway_default_hostname}/buckets/{bucket_name}?key={API_key}`
+  - You can check that the bucket was deleted by executing the first curl command
+- `curl -X DELETE {api_gateway_default_hostname}/objects/{bucket_name}/{object_name}?key={API_key}`
+  - You can check that the object in this bucket was deleted by executing the second curl command
+- `curl -X PUT {api_gateway_default_hostname}/objects/{bucket_name}/{object_name}/{new_object_name}?key={API_key}`
+  - You can check that the object in this bucket was renamed by executing the second curl command
 
 Last Paragraph (Conclusion)
 
+- Congratulations on setting up your own API! For security purposes it's recommend that you destroy the API key you used when testing the endpoints above. You can also tear down your entire infrastructure by running `terraform destroy --auto-approve`, this way, you not only prevent malicious actors from potentially being able to access your infrastructure, but you also eliminate the chances of you incurring Cloud charges.
 - For help with local testing please reach out
 - If something doesn't work also reach out and I'll try to help you out as much as possible
 - Ideal scenario we want to block direct access to the Cloud Run service via the endpoint, and only allow the public internet access to it via the API Gateway endpoint, this is something we might explore and provide as an update to this guide.
 
 GO AND MANUALLY DELETE ALL RESOURCES EXCEPT API ENABLEMENT
-LOST TF STATE FILES AND TF LIBS, NEED TO REINIT AND TESTtest
+LOST TF STATE FILES AND TF LIBS, NEED TO REINIT AND TEST
 
 DLP Code Dump is where Dataflow compiled code is
-Michelle needs a calendar
-Update timesheets because Radha signed off yesterday
+
+https://storage-crud-microservice-44beddciua-uk.a.run.app
