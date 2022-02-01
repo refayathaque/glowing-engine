@@ -235,3 +235,32 @@ Sun Jan 23 2022
 - Made the mistake of deleting the infra repo when I changed the name in remote, so I lost the tf state file. Because of this mistake, I have to go to the console and manually delete all the resources I provisioned with tf before. ✅
 - Successfully perform part 1 infra provisioning with `run-me-first.sh`. ✅
 - Successfully perform part 2 infra provisioning. ✅
+
+Mon Jan 24 2022
+
+- Final drafting blog post on Medium
+
+Tue Jan 25 2022
+
+- Final drafting blog post on Medium
+
+Wed Jan 26 2022
+
+- Final drafting blog post on Medium
+
+Thu Jan 27 2022
+
+- Final drafting blog post on Medium
+
+Fri Jan 28 2022
+
+- Publish blog post! ✅
+- Preliminary research of sunshine-through-motion calendar automation project ✅
+
+Sat Jan 29 2022
+
+- Create `.drawio` document to map everything out and use that as main document for project ✅
+
+Sun Jan 30 2022
+
+- Decided to not push on with somtum.io, will instead focus on upping cloud skills to fulfill my dream of working for a automotive company
